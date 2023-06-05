@@ -1,7 +1,6 @@
 import os
 import pygame
 import pytz
-import sys
 import time
 
 from datetime import datetime
