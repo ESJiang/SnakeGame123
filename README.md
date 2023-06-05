@@ -5,7 +5,7 @@ https://github.com/ESJiang/SnakeGame123/assets/43910771/993de398-30f4-42f5-8cca-
 
 
 - Create new conda environment for python3.9 and check [requirements.txt](https://github.com/ESJiang/SnakeGame123/blob/master/requirements.txt) to install packages. <br/>
-`Make sure the Python and pip are set to 3.9 if you have installed multiple python versions. You may also check .bash_profile to see if you have set some alias`
+  `Make sure the Python and pip are set to 3.9 if you have installed multiple python versions. You may also check .bash_profile to see if you have set some alias.`
 
 ```zsh
 conda create -n snake python=3.9
