@@ -275,18 +275,26 @@ class SnakeGame:
 
 # pygame.mixer.pre_init(44100, -16, 2, 512)
 
+
 def welcome(s):
     text = bigfont.render(s, 20, (0, 0, 0))
     textx = SCREEN_WIDTH / 2 - text.get_width() / 2
     texty = SCREEN_HEIGHT / 2 - text.get_height() / 2
     textx_size = text.get_width()
     texty_size = text.get_height()
-    pygame.draw.rect(screen, (255, 255, 0), ((textx - 5, texty - 5),
-                                             (textx_size + 10, texty_size +
-                                              10)))
+    pygame.draw.rect(
+        screen,
+        (255, 255, 0),
+        ((textx - 5, texty - 5), (textx_size + 10, texty_size + 10)),
+    )
 
-    screen.blit(text, (SCREEN_WIDTH / 2 - text.get_width() / 2,
-                       SCREEN_HEIGHT / 2 - text.get_height() / 2))
+    screen.blit(
+        text,
+        (
+            SCREEN_WIDTH / 2 - text.get_width() / 2,
+            SCREEN_HEIGHT / 2 - text.get_height() / 2,
+        ),
+    )
 
     clock = pygame.time.Clock()
     pygame.display.flip()

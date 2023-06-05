@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 
 SCREEN_WIDTH = 600
@@ -10,18 +11,25 @@ smallfont = pygame.font.Font(None, 45)
 
 
 def play_again():
-    text = bigfont.render('start_game', 13, (0, 0, 0))
+    text = bigfont.render("start_game", 13, (0, 0, 0))
     textx = SCREEN_WIDTH / 2 - text.get_width() / 2
     texty = SCREEN_HEIGHT / 2 - text.get_height() / 2
     textx_size = text.get_width()
     texty_size = text.get_height()
     screen.fill((0, 0, 0))
-    pygame.draw.rect(screen, (255, 255, 0), ((textx - 5, texty - 5),
-                                             (textx_size + 10, texty_size +
-                                              10)))
+    pygame.draw.rect(
+        screen,
+        (255, 255, 0),
+        ((textx - 5, texty - 5), (textx_size + 10, texty_size + 10)),
+    )
 
-    screen.blit(text, (SCREEN_WIDTH / 2 - text.get_width() / 2,
-                       SCREEN_HEIGHT / 2 - text.get_height() / 2))
+    screen.blit(
+        text,
+        (
+            SCREEN_WIDTH / 2 - text.get_width() / 2,
+            SCREEN_HEIGHT / 2 - text.get_height() / 2,
+        ),
+    )
 
     clock = pygame.time.Clock()
     pygame.display.flip()
