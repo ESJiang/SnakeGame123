@@ -1,9 +1,7 @@
 import os
 import pygame
-import pytz
 import time
 
-from datetime import datetime
 from pygame.math import Vector2
 from random import randint
 from typing import List
@@ -24,14 +22,12 @@ SCREEN_WIDTH = CELL_SIZE * CELL_NUMBER
 SCREEN_HEIGHT = CELL_SIZE * CELL_NUMBER
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen.fill((0, 191, 255))
 bigfont = pygame.font.Font(None, 80)
 smallfont = pygame.font.Font(None, 45)
-
-
 fruit_graphic = pygame.image.load(
     os.path.join("./", "Assets", "Graphics", "apple.png")
 ).convert_alpha()
-
 head_up_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "head_up.png")
 ).convert_alpha()
@@ -44,7 +40,6 @@ head_right_graphic = pygame.image.load(
 head_left_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "head_left.png")
 ).convert_alpha()
-
 tail_up_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "tail_up.png")
 ).convert_alpha()
@@ -57,14 +52,12 @@ tail_right_graphic = pygame.image.load(
 tail_left_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "tail_left.png")
 ).convert_alpha()
-
 body_vertical_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "body_vertical.png")
 ).convert_alpha()
 body_horizontal_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "body_horizontal.png")
 ).convert_alpha()
-
 body_tr_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "body_tr.png")
 ).convert_alpha()
@@ -92,10 +85,7 @@ class Fruit:
         self.pos = Vector2(self.x, self.y)
 
     def draw(self):
-        fruit_rect = pygame.Rect(
-            self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE
-        )
-        canva.blit(fruit_graphic, fruit_rect)
+        canva.blit(fruit_graphic, pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 
 class Snake:
@@ -123,9 +113,7 @@ class Snake:
 
     def draw_score(self):
         score_text = str(self.length - 3)
-        score_surface = pygame.font.Font(
-            "Assets/Font/PoetsenOne-Regular.ttf", 25
-        ).render(f"Count: {score_text}", True, (56, 74, 12))
+        score_surface = pygame.font.Font("Assets/Font/PoetsenOne-Regular.ttf", 25).render(f"Count: {score_text}", True, (56, 74, 12))
         score_x = int(CELL_NUMBER * CELL_SIZE - 60)
         score_y = int(CELL_NUMBER * CELL_SIZE - 40)
         score_rect = score_surface.get_rect(center=(score_x, score_y))
@@ -138,9 +126,7 @@ class Snake:
         self.update_head_graphic()
         self.update_tail_graphic()
         for index, block in enumerate(self.body):
-            block_rect = pygame.Rect(
-                block.x * CELL_SIZE, block.y * CELL_SIZE, CELL_SIZE, CELL_SIZE
-            )
+            block_rect = pygame.Rect(block.x * CELL_SIZE, block.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
             if index == 0:
                 canva.blit(self.tail_graphic, block_rect)
             elif index == self.length - 1:
@@ -181,15 +167,13 @@ class Snake:
                         and next_block.x == 1
                     ):
                         canva.blit(self.body_br_graphic, block_rect)
-                # pygame.draw.rect(canva, COLOUR_SNAKE, block_rect)
 
     def update_tail_graphic(self):
-        tail_relation = self.body[1] - self.body[0]
-        if tail_relation == Vector2(1, 0):
+        if self.body[1] - self.body[0] == Vector2(1, 0):
             self.tail_graphic = tail_left_graphic
-        elif tail_relation == Vector2(-1, 0):
+        elif self.body[1] - self.body[0] == Vector2(-1, 0):
             self.tail_graphic = tail_right_graphic
-        elif tail_relation == Vector2(0, 1):
+        elif self.body[1] - self.body[0] == Vector2(0, 1):
             self.tail_graphic = tail_up_graphic
         else:
             self.tail_graphic = tail_down_graphic
@@ -205,13 +189,12 @@ class Snake:
             self.head_graphic = head_up_graphic
 
     def move(self):
-        new_head = self.head + self.direction
         if not self.add_body:
             new_body = self.body[1:]
-            new_body.append(new_head)
+            new_body.append(self.head + self.direction)
             self.body = new_body[:]
         else:
-            self.body.append(new_head)
+            self.body.append(self.head + self.direction)
             self.add_body = False
 
     def grow(self):
@@ -224,7 +207,7 @@ class SnakeGame:
         self.snake = Snake()
 
     def draw(self):
-        # self.snake.play_sound()
+        self.snake.play_sound()
         self.snake.draw_score()
         self.fruit.draw()
         self.snake.draw()
@@ -236,30 +219,23 @@ class SnakeGame:
 
     def check_eat(self):
         if self.fruit.pos == self.snake.head:
-            # 蛇变长了一节
             self.snake.grow()
-            # 水果被重新摆放
             self.fruit.random_place()
 
     def check_fail(self):
-        # 蛇头有没有撞墙
         if (
             not 0 <= self.snake.head.x < CELL_NUMBER
             or not 0 <= self.snake.head.y < CELL_NUMBER
         ):
             self.game_over()
         else:
-            # 蛇头有没有撞到自己
             for block in self.snake.body[:-1]:
                 if block == self.snake.head:
                     self.game_over()
 
     def game_over(self):
-        # 游戏结束后的处理细节 - 可以更新一个game_over page.
-        Gameover_font = pygame.font.SysFont("skia", 40, bold=True, italic=True)
-        Gameover_color = Gameover_font.render(
-            "Game Over", True, pygame.Color(153, 0, 0)
-        )
+        Gameover_color = pygame.font.SysFont("skia", 40, bold=True, italic=True).render(
+            "Game Over", True, pygame.Color(153, 0, 0))
         Gameover_location = Gameover_color.get_rect()
         Gameover_location.midtop = (int(CELL_SIZE * CELL_NUMBER / 2), 20)
         canva.blit(Gameover_color, Gameover_location)
@@ -268,15 +244,10 @@ class SnakeGame:
         while True:
             welcome("Restart")
             new_game()
-        # pygame.quit()
-        # sys.exit()
 
 
-# pygame.mixer.pre_init(44100, -16, 2, 512)
-
-
-def welcome(s):
-    text = bigfont.render(s, 20, (0, 0, 0))
+def welcome(msg):
+    text = bigfont.render(msg, 20, (0, 0, 0))
     textx = SCREEN_WIDTH / 2 - text.get_width() / 2
     texty = SCREEN_HEIGHT / 2 - text.get_height() / 2
     textx_size = text.get_width()
@@ -295,11 +266,10 @@ def welcome(s):
         ),
     )
 
-    clock = pygame.time.Clock()
     pygame.display.flip()
     in_main_menu = True
     while in_main_menu:
-        clock.tick(50)
+        pygame.time.Clock().tick(50)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 in_main_menu = False
@@ -324,23 +294,19 @@ def new_game():
                 snake_game.update()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    # 蛇的前进方向是向下, 不改变其前进方向; 其他情况改变前进方向为向上
                     if snake_game.snake.direction != Vector2(0, 1):
                         snake_game.snake.direction = Vector2(0, -1)
                 elif event.key == pygame.K_DOWN:
-                    # 蛇的前进方向是向上, 不改变其前进方向; 其他情况改变前进方向为向下
                     if snake_game.snake.direction != Vector2(0, -1):
                         snake_game.snake.direction = Vector2(0, 1)
                 elif event.key == pygame.K_LEFT:
-                    # 蛇的前进方向是向右, 不改变其前进方向; 其他情况改变前进方向为向左
                     if snake_game.snake.direction != Vector2(1, 0):
                         snake_game.snake.direction = Vector2(-1, 0)
                 else:
-                    # 蛇的前进方向是向左, 不改变其前进方向; 其他情况改变前进方向为向右
                     if snake_game.snake.direction != Vector2(-1, 0):
                         snake_game.snake.direction = Vector2(1, 0)
         pygame.display.set_caption(
-            f'PYGAME & {datetime.now(pytz.timezone("Australia/Melbourne")).strftime("%H:%M:%S")}'
+            f'PYGAME {time.ctime()[11:19]}'
         )
         canva.fill(COLOUR_BG)
         snake_game.draw()
@@ -348,6 +314,5 @@ def new_game():
         clock.tick(MAX_FPS)
 
 
-screen.fill((0, 191, 255))
 welcome("Start_Game")
 new_game()
