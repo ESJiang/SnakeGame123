@@ -27,7 +27,7 @@ screen.fill((0, 191, 255))
 bigfont = pygame.font.Font(None, 80)
 smallfont = pygame.font.Font(None, 45)
 fruit_graphic = pygame.image.load(
-    os.path.join("./", "Assets", "Graphics", "apple.png")
+    os.path.join(package_base_path, "Assets", "Graphics", "apple.png")
 ).convert_alpha()
 head_up_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "head_up.png")
@@ -112,12 +112,17 @@ class Snake:
         return self.body[-1]
 
     @property
+    def tail(self):
+        return self.body[0]
+
+    @property
     def length(self):
         return len(self.body)
 
     def draw_score(self):
         score_surface = pygame.font.Font(
-            "Assets/Font/PoetsenOne-Regular.ttf", 25
+            os.path.join(package_base_path, "Assets", "Font", "PoetsenOne-Regular.ttf"),
+            25,
         ).render(f"Count: {str(self.length - 3)}", True, (56, 74, 12))
         score_rect = score_surface.get_rect(
             center=(
@@ -142,8 +147,8 @@ class Snake:
             elif index == self.length - 1:
                 canva.blit(self.head_graphic, block_rect)
             else:
-                prev_block = self.body[index - 1] - block
-                next_block = self.body[index + 1] - block
+                next_block = self.body[index - 1] - block
+                prev_block = self.body[index + 1] - block
                 if prev_block.x == next_block.x:
                     canva.blit(self.body_vertical_graphic, block_rect)
                 elif prev_block.y == next_block.y:
@@ -179,21 +184,23 @@ class Snake:
                         canva.blit(self.body_br_graphic, block_rect)
 
     def update_tail_graphic(self):
-        if self.body[1] - self.body[0] == Vector2(1, 0):
+        tail_direction = self.body[1] - self.tail
+        if tail_direction == Vector2(1, 0):
             self.tail_graphic = tail_left_graphic
-        elif self.body[1] - self.body[0] == Vector2(-1, 0):
+        elif tail_direction == Vector2(-1, 0):
             self.tail_graphic = tail_right_graphic
-        elif self.body[1] - self.body[0] == Vector2(0, 1):
+        elif tail_direction == Vector2(0, 1):
             self.tail_graphic = tail_up_graphic
         else:
             self.tail_graphic = tail_down_graphic
 
     def update_head_graphic(self):
-        if self.direction == Vector2(1, 0) or self.direction == Vector2(0, 0):
+        head_direction = self.head - self.body[-2]
+        if head_direction == Vector2(1, 0) or head_direction == Vector2(0, 0):
             self.head_graphic = head_right_graphic
-        elif self.direction == Vector2(-1, 0):
+        elif head_direction == Vector2(-1, 0):
             self.head_graphic = head_left_graphic
-        elif self.direction == Vector2(0, 1):
+        elif head_direction == Vector2(0, 1):
             self.head_graphic = head_down_graphic
         else:
             self.head_graphic = head_up_graphic
