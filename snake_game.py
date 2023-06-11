@@ -196,7 +196,7 @@ class Snake:
 
     def update_head_graphic(self):
         head_direction = self.head - self.body[-2]
-        if head_direction == Vector2(1, 0) or head_direction == Vector2(0, 0):
+        if head_direction == Vector2(1, 0):
             self.head_graphic = head_right_graphic
         elif head_direction == Vector2(-1, 0):
             self.head_graphic = head_left_graphic
@@ -210,7 +210,7 @@ class Snake:
             new_body = self.body[1:]
             if self.direction != Vector2(0, 0):
                 new_body.append(self.head + self.direction)
-                self.body = new_body[:]
+                self.body = new_body
         else:
             self.body.append(self.head + self.direction)
             self.add_body = False
@@ -320,7 +320,9 @@ def new_game():
                     if snake_game.snake.direction != Vector2(0, -1):
                         snake_game.snake.direction = Vector2(0, 1)
                 elif event.key == pygame.K_LEFT:
-                    if snake_game.snake.direction != Vector2(1, 0):
+                    if snake_game.snake.direction != Vector2(
+                        1, 0
+                    ) and snake_game.snake.direction != Vector2(0, 0):
                         snake_game.snake.direction = Vector2(-1, 0)
                 else:
                     if snake_game.snake.direction != Vector2(-1, 0):
