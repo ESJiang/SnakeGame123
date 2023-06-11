@@ -13,4 +13,3 @@ pip install -r requirements.txt
 ```
 
 -   Feature: OOP in Python -> Create 3 classes, including Fruit, Snake, and SnakeGame. The key function is draw() in SnakeGame class.
-S
