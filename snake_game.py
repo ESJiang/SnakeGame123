@@ -10,22 +10,18 @@ COLOUR_BG = (175, 215, 70)
 COLOUR_FRUIT = (183, 111, 122)
 COLOUR_SNAKE = (126, 166, 114)
 SNAKE_UPDATE = pygame.USEREVENT
-MAX_FPS = 60
-CELL_SIZE, CELL_NUMBER = 30, 20
+MAX_FPS, CELL_SIZE, CELL_NUMBER = 60, 30, 20
 package_base_path = os.path.dirname(os.path.abspath(__file__))
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.time.set_timer(SNAKE_UPDATE, 100)
 canva = pygame.display.set_mode((CELL_SIZE * CELL_NUMBER, CELL_SIZE * CELL_NUMBER))
 clock = pygame.time.Clock()
-
 SCREEN_WIDTH = CELL_SIZE * CELL_NUMBER
 SCREEN_HEIGHT = CELL_SIZE * CELL_NUMBER
-
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 screen.fill((0, 191, 255))
-bigfont = pygame.font.Font(None, 80)
-smallfont = pygame.font.Font(None, 45)
+
 fruit_graphic = pygame.image.load(
     os.path.join(package_base_path, "Assets", "Graphics", "apple.png")
 ).convert_alpha()
@@ -147,8 +143,8 @@ class Snake:
             elif index == self.length - 1:
                 canva.blit(self.head_graphic, block_rect)
             else:
-                next_block = self.body[index - 1] - block
-                prev_block = self.body[index + 1] - block
+                prev_block = self.body[index - 1] - block
+                next_block = self.body[index + 1] - block
                 if prev_block.x == next_block.x:
                     canva.blit(self.body_vertical_graphic, block_rect)
                 elif prev_block.y == next_block.y:
@@ -262,14 +258,13 @@ class SnakeGame:
         Gameover_location.midtop = (int(CELL_SIZE * CELL_NUMBER / 2), 20)
         canva.blit(Gameover_color, Gameover_location)
         pygame.display.flip()
-        time.sleep(0.5)
         while True:
             welcome("Restart")
             new_game()
 
 
 def welcome(msg):
-    text = bigfont.render(msg, True, (0, 0, 0))
+    text = pygame.font.Font(None, 80).render(msg, True, (0, 0, 0))
     textx = SCREEN_WIDTH / 2 - text.get_width() / 2
     texty = SCREEN_HEIGHT / 2 - text.get_height() / 2
     textx_size = text.get_width()
