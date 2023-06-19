@@ -1,5 +1,6 @@
 import os
 import pygame
+import sys
 import time
 
 from pygame.math import Vector2
@@ -202,14 +203,15 @@ class Snake:
             self.head_graphic = head_up_graphic
 
     def move(self):
-        if not self.add_body:
-            new_body = self.body[1:]
-            if self.direction != Vector2(0, 0):
-                new_body.append(self.head + self.direction)
-                self.body = new_body
-        else:
+        if self.add_body:
             self.body.append(self.head + self.direction)
             self.add_body = False
+        else:
+            self.body = (
+                self.body[1:] + [self.head + self.direction]
+                if self.direction != Vector2(0, 0)
+                else self.body
+            )
 
     def grow(self):
         self.add_body = True
@@ -235,9 +237,8 @@ class SnakeGame:
             self.snake.play_sound()
             self.snake.grow()
             self.fruit.random_place()
-        for block in self.snake.body:
-            if block == self.fruit.pos:
-                self.fruit.random_place()
+        elif self.fruit.pos in self.snake.body:
+            self.fruit.random_place()
 
     def check_fail(self):
         if (
@@ -245,18 +246,17 @@ class SnakeGame:
             or not 0 <= self.snake.head.y < CELL_NUMBER
         ):
             self.game_over()
-        else:
-            for block in self.snake.body[:-1]:
-                if block == self.snake.head:
-                    self.game_over()
+        elif self.snake.head in self.snake.body[:-1]:
+            self.game_over()
 
     def game_over(self):
-        Gameover_color = pygame.font.SysFont("skia", 40, bold=True, italic=True).render(
+        gameover_color = pygame.font.SysFont("skia", 40, bold=True, italic=True).render(
             "Game Over", True, pygame.Color(153, 0, 0)
         )
-        Gameover_location = Gameover_color.get_rect()
-        Gameover_location.midtop = (int(CELL_SIZE * CELL_NUMBER / 2), 20)
-        canva.blit(Gameover_color, Gameover_location)
+        gameover_location = gameover_color.get_rect(
+            midtop=(int(CELL_SIZE * CELL_NUMBER / 2), 20)
+        )
+        canva.blit(gameover_color, gameover_location)
         pygame.display.flip()
         while True:
             welcome("Restart")
@@ -265,38 +265,21 @@ class SnakeGame:
 
 def welcome(msg):
     text = pygame.font.Font(None, 80).render(msg, True, (0, 0, 0))
-    textx = SCREEN_WIDTH / 2 - text.get_width() / 2
-    texty = SCREEN_HEIGHT / 2 - text.get_height() / 2
-    textx_size = text.get_width()
-    texty_size = text.get_height()
-    pygame.draw.rect(
-        screen,
-        (255, 255, 0),
-        ((textx - 5, texty - 5), (textx_size + 10, texty_size + 10)),
-    )
-    screen.blit(
-        text,
-        (
-            SCREEN_WIDTH / 2 - text.get_width() / 2,
-            SCREEN_HEIGHT / 2 - text.get_height() / 2,
-        ),
-    )
+    text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+    text_rect.inflate_ip(10, 10)
+    pygame.draw.rect(screen, (255, 255, 0), text_rect)
+    screen.blit(text, text_rect)
     pygame.display.flip()
-    in_main_menu = True
-    while in_main_menu:
-        pygame.time.Clock().tick(50)
+
+    while True:
+        clock.tick(50)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                in_main_menu = False
-                pygame.display.quit()
                 pygame.quit()
-                quit()
+                sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= textx - 5 and x <= textx + textx_size + 5:
-                    if y >= texty - 5 and y <= texty + texty_size + 5:
-                        in_main_menu = False
-                        break
+                if text_rect.collidepoint(event.pos):
+                    return
 
 
 def new_game():
@@ -305,23 +288,29 @@ def new_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 snake_game.game_over()
-            if event.type == SNAKE_UPDATE:
+            elif event.type == SNAKE_UPDATE:
                 snake_game.update()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    if snake_game.snake.direction != Vector2(0, 1):
-                        snake_game.snake.direction = Vector2(0, -1)
-                elif event.key == pygame.K_DOWN:
-                    if snake_game.snake.direction != Vector2(0, -1):
-                        snake_game.snake.direction = Vector2(0, 1)
-                elif event.key == pygame.K_LEFT:
-                    if snake_game.snake.direction != Vector2(
-                        1, 0
-                    ) and snake_game.snake.direction != Vector2(0, 0):
-                        snake_game.snake.direction = Vector2(-1, 0)
-                else:
-                    if snake_game.snake.direction != Vector2(-1, 0):
-                        snake_game.snake.direction = Vector2(1, 0)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and snake_game.snake.direction != Vector2(
+                    0, 1
+                ):
+                    snake_game.snake.direction = Vector2(0, -1)
+                elif (
+                    event.key == pygame.K_DOWN
+                    and snake_game.snake.direction != Vector2(0, -1)
+                ):
+                    snake_game.snake.direction = Vector2(0, 1)
+                elif (
+                    event.key == pygame.K_LEFT
+                    and snake_game.snake.direction != Vector2(1, 0)
+                    and snake_game.snake.direction != Vector2(0, 0)
+                ):
+                    snake_game.snake.direction = Vector2(-1, 0)
+                elif (
+                    event.key == pygame.K_RIGHT
+                    and snake_game.snake.direction != Vector2(-1, 0)
+                ):
+                    snake_game.snake.direction = Vector2(1, 0)
         pygame.display.set_caption(f"PYGAME {time.ctime()[11:19]}")
         canva.fill(COLOUR_BG)
         snake_game.draw()
