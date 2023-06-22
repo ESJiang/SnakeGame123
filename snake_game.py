@@ -1,10 +1,10 @@
 import os
 import pygame
+import random
 import sys
 import time
 
 from pygame.math import Vector2
-from random import randint
 from typing import List
 
 COLOUR_BG = (175, 215, 70)
@@ -78,14 +78,16 @@ class Fruit:
         self.random_place()
 
     def random_place(self):
-        self.x = randint(0, CELL_NUMBER - 1)
-        self.y = randint(0, CELL_NUMBER - 1)
-        self.pos = Vector2(self.x, self.y)
+        self.pos = Vector2(
+            random.choice(range(CELL_NUMBER)), random.choice(range(CELL_NUMBER))
+        )
 
     def draw(self):
         canva.blit(
             fruit_graphic,
-            pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE),
+            pygame.Rect(
+                self.pos.x * CELL_SIZE, self.pos.y * CELL_SIZE, CELL_SIZE, CELL_SIZE
+            ),
         )
 
 
@@ -121,13 +123,15 @@ class Snake:
             os.path.join(package_base_path, "Assets", "Font", "PoetsenOne-Regular.ttf"),
             25,
         ).render(f"Count: {str(self.length - 3)}", True, (56, 74, 12))
-        score_rect = score_surface.get_rect(
-            center=(
-                int(CELL_NUMBER * CELL_SIZE - 60),
-                int(CELL_NUMBER * CELL_SIZE - 40),
-            )
+        canva.blit(
+            score_surface,
+            score_surface.get_rect(
+                center=(
+                    int(CELL_NUMBER * CELL_SIZE - 60),
+                    int(CELL_NUMBER * CELL_SIZE - 40),
+                )
+            ),
         )
-        canva.blit(score_surface, score_rect)
 
     def play_sound(self):
         self.crunch_sound_graphic.play()
@@ -244,9 +248,8 @@ class SnakeGame:
         if (
             not 0 <= self.snake.head.x < CELL_NUMBER
             or not 0 <= self.snake.head.y < CELL_NUMBER
+            or any(segment == self.snake.head for segment in self.snake.body[:-1])
         ):
-            self.game_over()
-        elif self.snake.head in self.snake.body[:-1]:
             self.game_over()
 
     def game_over(self):
@@ -267,7 +270,7 @@ def welcome(msg):
     text = pygame.font.Font(None, 80).render(msg, True, (0, 0, 0))
     text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
     text_rect.inflate_ip(10, 10)
-    pygame.draw.rect(screen, (255, 255, 0), text_rect)
+    pygame.draw.rect(screen, (255, 255, 0), text_rect)  # type: ignore
     screen.blit(text, text_rect)
     pygame.display.flip()
 
