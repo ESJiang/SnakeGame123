@@ -1,3 +1,6 @@
+- [SnakeGame practice](#snakegame-practice)
+  - [A simple snake game made with Python. Below is a demonstration for the game.](#a-simple-snake-game-made-with-python-below-is-a-demonstration-for-the-game)
+
 # SnakeGame practice
 
 ## A simple snake game made with Python. Below is a demonstration for the game.
