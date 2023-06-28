@@ -57,8 +57,9 @@ body_br_graphic = load_image("body_br.png")
 body_bl_graphic = load_image("body_bl.png")
 crunch_sound_graphic = load_sound("crunch.wav")
 
-""" A fruit object should have x,y coordinates.
-    whenever the snake head match its position, the fruit shoud be placed randomly (also not overlap the snake body)
+"""
+A fruit object should have x,y coordinates.
+whenever the snake head match its position, the fruit shoud be placed randomly (also not overlap the snake body)
 """
 
 
@@ -179,7 +180,7 @@ class Snake:
 
 
 """
-SnakeGame()takes advantage of fruit() and Snake().
+SnakeGame() takes advantage of fruit() and Snake().
 It defines the game logic and reflects OOP features in Python.
 """
 
@@ -228,7 +229,9 @@ class SnakeGame:
         if (
             not 0 <= self.snake.head.x < CELL_NUMBER
             or not 0 <= self.snake.head.y < CELL_NUMBER
-            or any(segment == self.snake.head for segment in self.snake.body[:-1])
+            or any(
+                segment == self.snake.head for segment in self.snake.body[:-1]
+            )  # An easy way to judge whether the snkae hits its own body or not
         ):
             self.__game_over()
 
