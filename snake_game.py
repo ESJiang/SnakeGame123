@@ -57,6 +57,10 @@ body_br_graphic = load_image("body_br.png")
 body_bl_graphic = load_image("body_bl.png")
 crunch_sound_graphic = load_sound("crunch.wav")
 
+""" A fruit object should have x,y coordinates.
+    whenever the snake head match its position, the fruit shoud be placed randomly (also not overlap the snake body)
+"""
+
 
 class Fruit:
     def __init__(self):
@@ -70,6 +74,12 @@ class Fruit:
             fruit_graphic,
             pygame.Rect(self.pos.x * CELL_SIZE, self.pos.y * CELL_SIZE, CELL_SIZE, CELL_SIZE),
         )
+
+
+"""
+A snake object should have x,y coordinates.
+It can also move, grow, and play sound.
+"""
 
 
 class Snake:
@@ -166,6 +176,12 @@ class Snake:
 
     def grow(self):
         self.add_body = True
+
+
+"""
+SnakeGame()takes advantage of fruit() and Snake().
+It defines the game logic and reflects OOP features in Python.
+"""
 
 
 class SnakeGame:
